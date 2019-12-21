@@ -1,11 +1,10 @@
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from ..helpers.renderers import RequestJSONRenderer
 from .serializers import RegistrationSerializer
 from ..helpers.constants import SIGNUP_SUCCESS_MESSAGE
-from .models import User
 
 
 class RegistrationAPIView(generics.CreateAPIView):
@@ -24,7 +23,6 @@ class RegistrationAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         serializer.save()
-        data = serializer.data
 
         return_message = {'message': SIGNUP_SUCCESS_MESSAGE}
         return Response(return_message, status=status.HTTP_201_CREATED)

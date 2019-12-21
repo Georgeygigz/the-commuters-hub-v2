@@ -1,0 +1,15 @@
+[run]
+include = */apps/*
+omit =
+    *migrations*
+    *__init__*
+    *settings*
+    *urls*
+    *models*
+    *serializers*
+    *wsgi*
+    *tests*
+    *admin*
+    *apps*
+    *push_id*
+    *celery*
