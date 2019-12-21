@@ -13,6 +13,10 @@ drf-yasg = "*"
 django-rest-swagger = "*"
 numpy = "*"
 pyjwt = "*"
+coveralls = "*"
+codacy-coverage = "*"
+codecov = "*"
+coverage = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

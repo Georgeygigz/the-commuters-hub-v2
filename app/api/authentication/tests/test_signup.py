@@ -1,7 +1,6 @@
 from rest_framework import status
 from .base_test import TestBaseCase
 from ...helpers.constants import SIGNUP_SUCCESS_MESSAGE
-from ...helpers.serialization_errors import error_dict
 
 
 class AuthenticationTest(TestBaseCase):
