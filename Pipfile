@@ -17,6 +17,9 @@ coveralls = "*"
 codacy-coverage = "*"
 codecov = "*"
 coverage = "*"
+django-sendgrid-v5 = "*"
+celery = "*"
+redis = "*"
 
 [requires]
 python_version = "3.6"

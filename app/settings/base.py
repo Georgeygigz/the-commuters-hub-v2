@@ -21,6 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY','')
+RESET_TOKEN_EXP_TIME = int(os.getenv('RESET_TOKEN_EXP_TIME', 1))
+TOKEN_EXP_TIME = int(os.getenv('TOKEN_EXP_TIME', 24))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -142,3 +144,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# send grid credentials
+EMAIL_HOST = os.getenv('EMAIL_HOST', '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
+EMAIL_SENDER = os.getenv('EMAIL_SENDER', '')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# celery configurations
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', '')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', '')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
