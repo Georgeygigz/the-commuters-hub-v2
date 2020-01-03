@@ -202,3 +202,93 @@ class LoginSerializer(serializers.Serializer):
             'email': user.email,
             'token': user.token
         }
+
+class UserRetriveUpdateSerializer(serializers.ModelSerializer):
+    """Handles serialization and deserialization of User objects."""
+
+    id = serializers.CharField(read_only=True)
+    email = serializers.CharField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(read_only=True)
+    surname = serializers.CharField(read_only=True)
+    phone_number = serializers.RegexField(
+        regex='^(?:\B\+ ?254|\b0)(?: *[(-]? *\d(?:[ \d]*\d)?)? *(?:[)-] *)?\d+ *(?:[/)-] *)?\d+ *(?:[/)-] *)?\d+(?: *- *\d+)?',
+        allow_null=False,
+        required=False,
+        min_length=10,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message=error_dict['already_exist'].format("Phone number"),
+            )
+        ],
+        error_messages={
+            'min_length': error_dict['min_length'].format("Phone number", "10"),
+            'invalid': error_dict['invalid_phone_no']
+        }
+    )
+    # Passwords must be at least 8 characters, but no more than 128
+    # characters. These values are the default provided by Django. We could
+    # change them, but that would create extra work while introducing no real
+    # benefit, so let's just stick with the defaults.
+    # Ensure passwords are at least 8 characters long, no longer than 128
+    # characters, and can not be read by the client.
+    password = serializers.RegexField(
+        regex=("^(?=.{8,}$)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*"),
+        min_length=8,
+        max_length=30,
+        required=False,
+        write_only=True,
+        allow_null=False,
+        error_messages={
+            'min_length': error_dict['min_length'].format("Password", "8"),
+            'max_length': 'Password cannot be more than 30 characters',
+            'invalid': error_dict['invalid_password'],
+        }
+    )
+    username = serializers.RegexField(
+        regex='^(?!.*\ )[A-Za-z\d\-\_]+$',
+        allow_null=False,
+        required=False,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message=error_dict['already_exist'].format("Username"),
+            )
+        ],
+        error_messages={
+            'invalid': error_dict['invalid_name'].format('Username')
+        }
+    )
+
+    @classmethod
+    def update(self, instance, validated_data):
+        """Performs an update on a User."""
+
+        # Passwords should not be handled with `setattr`, unlike other fields.
+        # This is because Django provides a function that handles hashing and
+        # salting passwords, which is important for security. What that means
+        # here is that we need to remove the password field from the
+        # `validated_data` dictionary before iterating over it.
+        password = validated_data.pop('password', None)
+
+        for (key, value) in validated_data.items():
+            # For the keys remaining in `validated_data`, we will set them on
+            # the current `User` instance one at a time.
+            setattr(instance, key, value)
+
+        if password is not None:
+            # `.set_password()` is the method mentioned above. It handles all
+            # of the security stuff that we shouldn't be concerned with.
+            instance.set_password(password)
+
+        # Finally, after everything has been updated, we must explicitly save
+        # the model. It's worth pointing out that `.set_password()` does not
+        # save the model.
+        instance.save()
+        return instance
+
+    class Meta:
+        model = User
+        exclude = ('last_login', 'is_superuser', 'deleted', 'id_number',
+                   'is_active', 'is_staff', 'groups', 'user_permissions')

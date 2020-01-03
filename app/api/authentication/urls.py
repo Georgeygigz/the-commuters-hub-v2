@@ -14,8 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import RegistrationAPIView
+from .views import (RegistrationAPIView,
+                    VerifyAPIView, LoginAPIView)
 
 urlpatterns = [
     path('signup', RegistrationAPIView.as_view(), name='user-registration'),
+    path('login', LoginAPIView.as_view(), name='user-login'),
+    path('verify/<str:token>', VerifyAPIView.as_view(), name='user-verify'),
 ]
