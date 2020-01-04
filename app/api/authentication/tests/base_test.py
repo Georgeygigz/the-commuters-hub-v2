@@ -10,6 +10,8 @@ class TestBaseCase(APITestCase):
         """
         self.signup_url = api_reverse('authentication:user-registration')
         self.login_url = api_reverse('authentication:user-login')
+        self.retrieve_update_user_url = api_reverse(
+            'authentication:user-retrieve-update')
 
         self.valid_user = {
             'first_name': 'mary',
@@ -74,6 +76,10 @@ class TestBaseCase(APITestCase):
             'password': 'janeDoe@123'
         }
 
+        self.valid_user_two = {
+            'username': 'Doe123',
+            'password': 'Jan5432@123',
+        }
 
     def signup_user(self):
         """
@@ -135,3 +141,12 @@ class TestBaseCase(APITestCase):
         response = self.client.post(self.login_url,
                                     self.invalid_user_login_details, format='json')
         return response
+
+    def activated_user(self):
+        """
+        create an active user
+        """
+        user = self.signup_user_two()
+        user.is_active = True
+        user.save()
+        return user
