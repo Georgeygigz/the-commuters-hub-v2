@@ -1,14 +1,19 @@
 from django.conf import settings
 from django.template.loader import render_to_string
 from rest_framework import status
-from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework import generics,mixins
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from ..helpers.renderers import RequestJSONRenderer
 from .serializers import (RegistrationSerializer, LoginSerializer,
-                          UserRetriveUpdateSerializer)
+                          UserRetriveUpdateSerializer,UserSearchSerializer)
 from .tasks import send_mail_
 from ..helpers.token import get_token_data
+from .models import User
+from ..helpers.pagination_helper import Pagination
 from ..helpers.constants import (
     SIGNUP_SUCCESS_MESSAGE, VERIFICATION_SUCCESS_MSG)
 
@@ -91,3 +96,57 @@ class LoginAPIView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserRetrieveUpdateAPIView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    """
+    Class that handles retrieving and updating user info
+    """
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (RequestJSONRenderer,)
+    serializer_class = UserRetriveUpdateSerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        retrieve user details from the token provided
+        """
+        serializer = self.serializer_class(request.user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        """
+        overide the default patch() method to enable
+        the user update their details
+        """
+        data = request.data
+
+        serializer = self.serializer_class(
+            request.user, data=data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UsersRetrieveSearchViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    retrieve: Return users.
+    list: Return a list of users
+    """
+    permission_classes = (IsAuthenticated,)
+    queryset = User.objects.filter(
+        deleted=False, is_active=True).order_by('first_name')
+    serializer_class = UserSearchSerializer
+    pagination_class = Pagination
+    filter_backends = (SearchFilter,)
+    search_fields = ('first_name', 'last_name', 'surname',
+                     'email', 'username', 'phone_number',)
+
+    @action(methods=['GET'], detail=False, url_name='Search users')
+    def search(self, request, *args, **kwargs):
+        """
+        Search users
+        """
+        return super().list(request, *args, **kwargs)

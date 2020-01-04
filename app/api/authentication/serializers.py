@@ -292,3 +292,13 @@ class UserRetriveUpdateSerializer(serializers.ModelSerializer):
         model = User
         exclude = ('last_login', 'is_superuser', 'deleted', 'id_number',
                    'is_active', 'is_staff', 'groups', 'user_permissions')
+
+
+class UserSearchSerializer(serializers.ModelSerializer):
+    """Handles serialization and deserialization of User search objects."""
+    class Meta:
+        model = User
+        # List all of the fields that could possibly be included in a request
+        # or response, including fields specified explicitly above.
+        fields = ['first_name', 'last_name', 'surname', 'email', 'username',
+                  'phone_number', 'id']
