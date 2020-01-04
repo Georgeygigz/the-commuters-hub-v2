@@ -302,3 +302,31 @@ class UserSearchSerializer(serializers.ModelSerializer):
         # or response, including fields specified explicitly above.
         fields = ['first_name', 'last_name', 'surname', 'email', 'username',
                   'phone_number', 'id']
+
+
+class PasswordResetEmailSerializer(serializers.Serializer):
+    """
+    serializes email
+    """
+    email = serializers.EmailField(max_length=255, required=True)
+
+    @classmethod
+    def verify(self, email):
+        """
+        Verify that the email exists in the database
+        Args:
+            self (instance): and instance of the class
+            email (str): email to be verified
+        Return:
+            user (obj): the user object
+        """
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                "The email provided is not registered"
+            )
+        # Check this user is activated
+        if not user.is_active:
+            raise serializers.ValidationError('This user is deactivated')
+        return user

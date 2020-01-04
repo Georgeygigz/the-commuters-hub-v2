@@ -10,6 +10,7 @@ class TestBaseCase(APITestCase):
         """
         self.signup_url = api_reverse('authentication:user-registration')
         self.login_url = api_reverse('authentication:user-login')
+        self.pass_reset_url = api_reverse('authentication:user-reset-password')
         self.retrieve_update_user_url = api_reverse(
             'authentication:user-retrieve-update')
 
