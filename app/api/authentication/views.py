@@ -9,13 +9,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from ..helpers.renderers import RequestJSONRenderer
 from .serializers import (RegistrationSerializer, LoginSerializer,
-                          UserRetriveUpdateSerializer,UserSearchSerializer)
+                          UserRetriveUpdateSerializer,UserSearchSerializer,
+                        PasswordResetEmailSerializer)
 from .tasks import send_mail_
-from ..helpers.token import get_token_data
+from ..helpers.token import get_token_data, generate_password_reset_token
 from .models import User
 from ..helpers.pagination_helper import Pagination
 from ..helpers.constants import (
-    SIGNUP_SUCCESS_MESSAGE, VERIFICATION_SUCCESS_MSG)
+    SIGNUP_SUCCESS_MESSAGE, VERIFICATION_SUCCESS_MSG,PASS_RESET_MESSAGE)
 
 
 class RegistrationAPIView(generics.CreateAPIView):
@@ -150,3 +151,36 @@ class UsersRetrieveSearchViewSet(viewsets.ReadOnlyModelViewSet):
         Search users
         """
         return super().list(request, *args, **kwargs)
+
+
+class PassResetEmailAPIView(generics.CreateAPIView):
+    permission_classes = (AllowAny,)
+    renderer_classes = (RequestJSONRenderer,)
+    serializer_class = PasswordResetEmailSerializer
+
+    def post(self, request):
+        """
+        here, the user provides email to be used to get a link. The email must be registered,
+        token gets generated and sent to users via link.
+        """
+        email = request.data.get('email', {})
+        serializer = self.serializer_class(data={'email': email})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.verify(email)
+        message = "Please reset your password"
+        subject = "Password reset"
+        reset_link = settings.PASS_RESET_URL
+        token = generate_password_reset_token(user.email, user.id)
+        body = render_to_string('password_reset.html', {
+            'link': reset_link + token,
+            'name': user.first_name,
+        })
+
+        send_mail_.delay(
+            subject=subject,
+            message=message,
+            from_email=settings.EMAIL_SENDER,
+            recipient_list=[user.email],
+            html_message=body,
+            fail_silently=False,)
+        return Response({"message": PASS_RESET_MESSAGE}, status=status.HTTP_200_OK)

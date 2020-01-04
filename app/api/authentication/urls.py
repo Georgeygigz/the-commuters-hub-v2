@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.urls import path
 from .views import (RegistrationAPIView, UserRetrieveUpdateAPIView,
-                    VerifyAPIView, LoginAPIView,UsersRetrieveSearchViewSet)
+                    VerifyAPIView, LoginAPIView,UsersRetrieveSearchViewSet,
+                    PassResetEmailAPIView)
 
 urlpatterns = [
     path('signup', RegistrationAPIView.as_view(), name='user-registration'),
@@ -25,4 +26,6 @@ urlpatterns = [
         name='user-retrieve-update'),
     path('retrieve', UsersRetrieveSearchViewSet.as_view(
         {'get': 'search'}), name='users-retrieve-search'),
+    path('password-reset', PassResetEmailAPIView.as_view(),
+         name='user-reset-password'),
 ]
