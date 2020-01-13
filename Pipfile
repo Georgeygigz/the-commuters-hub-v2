@@ -20,6 +20,8 @@ coverage = "*"
 django-sendgrid-v5 = "*"
 celery = "*"
 redis = "*"
+geos = "*"
+django-extra-fields = "*"
 
 [requires]
 python_version = "3.6"

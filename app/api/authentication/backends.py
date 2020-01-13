@@ -1,5 +1,4 @@
 from rest_framework import authentication
-from rest_framework.exceptions import AuthenticationFailed
 from ..helpers.token import get_token_data
 
 
@@ -24,7 +23,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
         # Attempt decoding the token
         user = get_token_data(token)
         # Check this user is activated
-        if not user.is_active:
-            raise AuthenticationFailed('This user is deactivated')
+
 
         return (user, token)

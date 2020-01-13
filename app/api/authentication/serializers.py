@@ -186,15 +186,6 @@ class LoginSerializer(serializers.Serializer):
                 'A user with this email and password was not found.'
             )
 
-        # Django provides a flag on our `User` model called `is_active`. The
-        # purpose of this flag to tell us whether the user has been banned
-        # or otherwise deactivated. This will almost never be the case, but
-        # it is worth checking for. Raise an exception in this case.
-        if not user.is_active:
-            raise serializers.ValidationError(
-                'This user has been deactivated.'
-            )
-
         # The `validate` method should return a dictionary of validated data.
         # This is the data that is passed to the `create` and `update` methods
         # that we will see later on.
