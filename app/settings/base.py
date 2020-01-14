@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'app.core',
     'app.api',
     'app.api.authentication',
+    'app.api.route',
 
     'drf_yasg',
     'rest_framework_swagger',
@@ -107,7 +108,7 @@ SWAGGER_SETTINGS = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('DB_NAME'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST'),
