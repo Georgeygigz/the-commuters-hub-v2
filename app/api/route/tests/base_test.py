@@ -12,6 +12,8 @@ class TestBaseCase(APITestCase):
         self.schedule_route_url = api_reverse('route:schedule-route')
         self.login_url = api_reverse('authentication:user-login')
         self.join_route_url = api_reverse('route:join-route')
+        self.retrieve_route_url = api_reverse('route:retrieve-route')
+
 
         self.user_one = User.objects.create_user(
             first_name='jane1',
@@ -169,6 +171,17 @@ class TestBaseCase(APITestCase):
         self.join_route_successfully()
         response = self.client.post(
             self.join_route_url, self.route, format='json',
+            HTTP_AUTHORIZATION='token {}'.format(self.token_two))
+
+        return response
+
+    def retrieve_routes_successfully (self):
+        """
+        Schedule an existing route fails
+        """
+        self.schedule_route_successfully()
+        response = self.client.get(
+            self.retrieve_route_url, format='json',
             HTTP_AUTHORIZATION='token {}'.format(self.token_two))
 
         return response
