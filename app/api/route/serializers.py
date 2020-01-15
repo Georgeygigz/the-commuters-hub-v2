@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_extra_fields.geo_fields import PointField
 from ..helpers.serialization_errors import error_dict
-from .models import Route
+from .models import Route, Members
 
 
 class SchedulingRouteSerializer(serializers.ModelSerializer):
@@ -30,3 +30,38 @@ class SchedulingRouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
         fields = ('created_by','destination','starting_point','commuting_time')
+
+
+class MemberSerializer(serializers.ModelSerializer):
+
+    route = serializers.PrimaryKeyRelatedField(
+                    required=True,
+                    queryset=Route.objects.filter(),
+                    error_messages={'does_not_exist':
+                        error_dict['does_not_exist'].format('recipient')})
+
+    member =  serializers.CharField(read_only=True)
+
+    @staticmethod
+    def get_member(obj):
+        """
+        get the requester object
+        Args:
+            obj (object): current object reference
+        Return:
+            (obj): The requester object
+        """
+        return obj.id
+
+    @staticmethod
+    def validate_member(route_id,member_id):
+        member = Members.objects.filter(
+                    route=route_id,member=member_id)
+        if member:
+            raise serializers.ValidationError(
+                error_dict['exit_in_route']
+            )
+
+    class Meta:
+        model = Members
+        fields = ('route','member')

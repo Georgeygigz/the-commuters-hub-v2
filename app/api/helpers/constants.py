@@ -2,4 +2,5 @@ SIGNUP_SUCCESS_MESSAGE = "Thank you for registering at Commut hub To start using
 VERIFICATION_SUCCESS_MSG = "Congratulations! You have successfully activated your account."
 PASS_RESET_MESSAGE = "Please check your email for a link to reset your password. Thank you!"
 REQUEST_SUCCESS_MESSAGE = "The route has been created successfully"
+JOINED_ROUTE_SUCCESS_MESSAGE = "You have joined the route successfully"
 

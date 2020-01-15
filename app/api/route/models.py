@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from ..helpers.push_id import PushID
 from ..authentication.models import User
-
+from app.api.models import BaseModel
 
 class Route(models.Model):
     """
@@ -39,3 +39,9 @@ class Route(models.Model):
         super(Route, self).save() # pylint: disable=W0221
 
 
+class Members(BaseModel):
+    route = models.ForeignKey(Route,
+                              on_delete=models.CASCADE, related_name="route")
+
+    member = models.ForeignKey(User,
+                               on_delete=models.CASCADE, related_name="member")
