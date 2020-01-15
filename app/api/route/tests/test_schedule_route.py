@@ -25,7 +25,7 @@ class ScheduleRouteTest(TestBaseCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIsInstance(response.data, dict)
         self.assertIn(
-            b'You have already have an existing route',response.content)
+            b'You already have an existing route',response.content)
 
     def test_schedule_route_without_token_fails(self):
         """
