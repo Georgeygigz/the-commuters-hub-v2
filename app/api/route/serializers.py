@@ -2,6 +2,7 @@ from rest_framework import serializers
 from drf_extra_fields.geo_fields import PointField
 from ..helpers.serialization_errors import error_dict
 from .models import Route, Members
+from ..authentication.serializers import UserSearchSerializer
 
 
 class SchedulingRouteSerializer(serializers.ModelSerializer):
@@ -65,3 +66,45 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
         fields = ('route','member')
+
+class MembersRetrieveSerializer(serializers.ModelSerializer):
+
+    member = UserSearchSerializer()
+
+    def to_representation(self,instance):
+        """
+        Override the default to_representation
+        to return values only
+
+        Args:
+            instace (obj) : current object reference
+        """
+
+        # get the instance -> Dict of primitive data types
+        representation = super(MembersRetrieveSerializer,
+                               self).to_representation(instance)
+
+        # manipulate returned dictionary as desired
+        member = representation.pop('member')
+        return member
+
+    class Meta:
+        model = Members
+        fields = ('member',)
+
+class RouteRetrieveSerializer(serializers.ModelSerializer):
+
+    members = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_members(obj):
+        members_obj = Members.objects.filter(route=obj.id)
+        members_serializer = MembersRetrieveSerializer(members_obj, many=True)
+        return members_serializer.data
+
+    class Meta:
+        model = Route
+        fields =     ('id', 'created_at', 'updated_at', 'deleted',
+                       'starting_point', 'destination', 'commuting_time', 'created_by','members')
+
+
