@@ -38,4 +38,5 @@ urlpatterns = [
     url(r'^docs/$', swagger_ui_view),
     path('users/', include(('app.api.authentication.urls', 'authentication'), namespace='authentication')),
     path('route/', include(('app.api.route.urls', 'route'), namespace='route')),
+    path('vehicle/', include(('app.api.vehicle.urls', 'vehicle'), namespace='vehicle')),
 ]

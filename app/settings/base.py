@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'app.api',
     'app.api.authentication',
     'app.api.route',
+    'app.api.vehicle',
 
     'drf_yasg',
     'rest_framework_swagger',
