@@ -2,9 +2,9 @@ from rest_framework.views import status
 from .base_test import TestBaseCase
 
 
-class JoinRouteTest(TestBaseCase):
+class RouteRetrieveTest(TestBaseCase):
 
-    def test_retrieve_route_succeeds(self):
+    def test_retrieve_routes_succeeds(self):
         """
         Test retrieve routes
         """

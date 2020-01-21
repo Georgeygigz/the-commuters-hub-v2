@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework.reverse import reverse as api_reverse
 from ...authentication.models import User
 from ..models import Route
-
+from ...vehicle.models import Vehicle
 
 class TestBaseCase(APITestCase):
     def setUp(self):
@@ -13,6 +13,9 @@ class TestBaseCase(APITestCase):
         self.login_url = api_reverse('authentication:user-login')
         self.join_route_url = api_reverse('route:join-route')
         self.retrieve_route_url = api_reverse('route:retrieve-route')
+        self.register_vehicle_url = api_reverse('vehicle:register-vehicle')
+
+
 
 
         self.user_one = User.objects.create_user(
@@ -75,6 +78,15 @@ class TestBaseCase(APITestCase):
         self.token_three = self.login_user_three().data['token']
         self.route ={
             'route':self.get_route_object().id
+        }
+
+        self.valid_vehicle_details = {
+            "registration_number": "KAC236Q",
+            "capacity": "5"
+        }
+        vehicle = self.register_vehicle()
+        self.vehicle_id = {
+            'vehicle': vehicle.id
         }
 
 
@@ -177,7 +189,7 @@ class TestBaseCase(APITestCase):
 
     def retrieve_routes_successfully (self):
         """
-        Schedule an existing route fails
+        Retrieve all routes
         """
         self.schedule_route_successfully()
         response = self.client.get(
@@ -185,3 +197,47 @@ class TestBaseCase(APITestCase):
             HTTP_AUTHORIZATION='token {}'.format(self.token_two))
 
         return response
+
+    def retrieve_route_successfully (self):
+        """
+        Retrieve single route
+        """
+        self.register_vehicle()
+        route = self.get_route_object()
+        response = self.client.get(
+            api_reverse('route:route', args=[route.id]),
+            HTTP_AUTHORIZATION='token {}'.format(self.token_two))
+
+        return response
+
+    def retrieve_non_existing_route_fails (self):
+        """
+        Retrieve single route
+        """
+        self.register_vehicle()
+        response = self.client.get(
+            api_reverse('route:route', args=['-LaAAScbw94sd']),
+            HTTP_AUTHORIZATION='token {}'.format(self.token_two))
+
+        return response
+
+
+    def register_vehicle(self):
+        self.client.post(
+            self.register_vehicle_url, self.valid_vehicle_details, format='json',
+            HTTP_AUTHORIZATION='token {}'.format(self.token_two))
+
+        return Vehicle.objects.filter(owner=self.user_two.id).first()
+
+
+    def add_vehicle_for_the_route_successfully(self):
+        """
+        Add vehicle for the route successfully
+        """
+        route = self.get_route_object()
+        response = self.client.patch(
+            api_reverse('route:route', args=[route.id]),
+            self.vehicle_id ,
+            HTTP_AUTHORIZATION='token {}'.format(self.token_two))
+        return response
+

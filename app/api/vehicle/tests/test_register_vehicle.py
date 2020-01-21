@@ -5,7 +5,7 @@ from .base_test import TestBaseCase
 
 class RegisterVehicleTest(TestBaseCase):
 
-    def test_schedule_route_successeds(self):
+    def test_register_vehicle_successeds(self):
         """
         Test schedule route
         """

@@ -5,7 +5,7 @@ jobs:
       - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
         environment:
           PIPENV_VENV_IN_PROJECT: true
-      - image: mdillon/postgis:9.5
+      - image: mdillon/postgis
         env:
           - POSTGRES_USER: root
           - PGUSER: postgres
@@ -30,7 +30,7 @@ jobs:
             sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
 
       - restore_cache: # ensure this step occurs *before* installing dependencies
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps10-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       - run:
           name: install dependencies
@@ -43,7 +43,7 @@ jobs:
             gdal-bin python-gdal python3-gdal
 
       - save_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          key: deps10-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - ".venv"
             - "/usr/local/bin"
