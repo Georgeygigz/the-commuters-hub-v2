@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from ..helpers.push_id import PushID
 from ..authentication.models import User
+from ..vehicle.models import Vehicle
 from app.api.models import BaseModel
 
 class Route(models.Model):
@@ -29,6 +30,13 @@ class Route(models.Model):
     destination = models.PointField()
 
     commuting_time = models.TimeField()
+
+    vehicle = models.ForeignKey(Vehicle,
+                            default=None,
+                            null=True,
+                            blank=True,
+                            unique=False,
+                            on_delete=models.CASCADE, related_name="vehicle")
 
 
     def save(self,*args, **kwargs): # pylint: disable=W0221

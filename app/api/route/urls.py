@@ -14,12 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import (ScheduleRouteApiView, RouteJoinAPiView,RouteRetrieveApiView)
+from .views import (ScheduleRouteApiView, RouteJoinAPiView,
+                    RouteRetrieveApiView,RoutesRetrieveApiView)
 
 urlpatterns = [
     path('schedule', ScheduleRouteApiView.as_view(), name='schedule-route'),
     path('join', RouteJoinAPiView.as_view(), name='join-route'),
-    path('retrieve', RouteRetrieveApiView.as_view(
+    path('retrieve', RoutesRetrieveApiView.as_view(
          {'get': 'search'}), name='retrieve-route'),
-
+    path('<str:route_id>', RouteRetrieveApiView.as_view(), name='route'),
 ]

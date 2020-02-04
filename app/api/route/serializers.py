@@ -2,6 +2,8 @@ from rest_framework import serializers
 from drf_extra_fields.geo_fields import PointField
 from ..helpers.serialization_errors import error_dict
 from .models import Route, Members
+from ..vehicle.models import Vehicle
+from ..vehicle.serializers import VehicleRetrieveSerializer
 from ..authentication.serializers import UserSearchSerializer
 
 
@@ -95,6 +97,8 @@ class MembersRetrieveSerializer(serializers.ModelSerializer):
 class RouteRetrieveSerializer(serializers.ModelSerializer):
 
     members = serializers.SerializerMethodField()
+    created_by =  UserSearchSerializer()
+    vehicle = VehicleRetrieveSerializer()
 
     @staticmethod
     def get_members(obj):
@@ -104,7 +108,26 @@ class RouteRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Route
-        fields =     ('id', 'created_at', 'updated_at', 'deleted',
-                       'starting_point', 'destination', 'commuting_time', 'created_by','members')
+        fields =     ('id', 'created_at', 'updated_at', 'deleted', 'starting_point',
+                    'destination', 'vehicle', 'commuting_time', 'created_by','members')
 
 
+class RouteUpdateSerializer(serializers.ModelSerializer):
+    """Scheduling route serializer"""
+    id = serializers.CharField(read_only=True)
+    starting_point = PointField()
+
+    destination = PointField()
+
+    commuting_time = serializers.TimeField()
+
+    vehicle =  serializers.PrimaryKeyRelatedField(
+        required=True,
+        queryset=Vehicle.objects.filter(),
+        error_messages={'does_not_exist':
+                        error_dict['does_not_exist'].format('Vehicle')})
+
+    class Meta:
+        model = Route
+        fields =     ('id', 'starting_point', 'destination',
+                    'commuting_time','vehicle')

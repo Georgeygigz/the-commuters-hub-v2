@@ -26,3 +26,7 @@ class Vehicle(BaseModel):
                              choices=VEHICLE_STATUS, default=AVAILABLE)
 
     trips =  models.CharField(db_index=True, max_length=255, unique=False)
+
+    fare = models.FloatField(db_index=True, max_length=15, unique=False,
+                            default=None, blank=True,null=True)
+

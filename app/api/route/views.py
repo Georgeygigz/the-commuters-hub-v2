@@ -1,18 +1,19 @@
 from rest_framework import status
-from rest_framework import viewsets,generics
+from rest_framework import viewsets,generics, mixins
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from ..helpers.renderers import RequestJSONRenderer
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (SchedulingRouteSerializer,
-                          MemberSerializer, RouteRetrieveSerializer)
+from .serializers import (SchedulingRouteSerializer, MemberSerializer,
+                        RouteRetrieveSerializer, RouteUpdateSerializer)
 from ..helpers.constants import (REQUEST_SUCCESS_MESSAGE,
                                 JOINED_ROUTE_SUCCESS_MESSAGE)
 from .validators.route import validate_route
 from ..helpers.route_members import add_route_member
 from .models import Route
 from ..helpers.pagination_helper import Pagination
+from .validators.validate_route import validate_route_id
 
 # Create your views here.
 class ScheduleRouteApiView(generics.CreateAPIView):
@@ -62,10 +63,10 @@ class RouteJoinAPiView(generics.CreateAPIView):
         return Response(return_message, status=status.HTTP_201_CREATED)
 
 
-class RouteRetrieveApiView(viewsets.ReadOnlyModelViewSet):
+class RoutesRetrieveApiView(viewsets.ReadOnlyModelViewSet):
     """
-    retrieve: Return users.
-    list: Return a list of users
+    retrieve: Return Routes.
+    list: Return a list of routes
     """
     permission_classes = (IsAuthenticated,)
     queryset = Route.objects.all().order_by('created_at')
@@ -80,3 +81,38 @@ class RouteRetrieveApiView(viewsets.ReadOnlyModelViewSet):
         Search users
         """
         return super().list(request, *args, **kwargs)
+
+
+class RouteRetrieveApiView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (RequestJSONRenderer,)
+    serializer_class = RouteUpdateSerializer
+
+    def get(self, request, route_id):
+        """
+        Retrieve route details from the provided
+        """
+        self.serializer_class = RouteRetrieveSerializer
+        route = validate_route_id(route_id)
+        serializer = self.serializer_class(route)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, route_id):
+        """
+        overide the default patch() method to enable
+        the user add a vehicle
+        """
+
+        self.serializer_class = RouteUpdateSerializer
+        route = validate_route_id(route_id)
+
+
+        data = request.data
+        serializer = self.serializer_class(
+            route, data=data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
