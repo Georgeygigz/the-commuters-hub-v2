@@ -73,7 +73,7 @@ class RoutesRetrieveApiView(viewsets.ReadOnlyModelViewSet):
     serializer_class = RouteRetrieveSerializer
     pagination_class = Pagination
     filter_backends = (SearchFilter,)
-    search_fields = ('commuting_time')
+    search_fields = ('commuting_time',)
 
     @action(methods=['GET'], detail=False, url_name='Search users')
     def search(self, request, *args, **kwargs):

@@ -12,6 +12,7 @@ class TestBaseCase(APITestCase):
         """
         self.login_url = api_reverse('authentication:user-login')
         self.register_vehicle_url = api_reverse('vehicle:register-vehicle')
+        self.retrieve_vehicles_url = api_reverse('vehicle:vehicle-retrieve')
 
 
         self.user_one = User.objects.create_user(
@@ -152,3 +153,13 @@ class TestBaseCase(APITestCase):
             HTTP_AUTHORIZATION='token {}'.format(self.token))
         return response
 
+    def retrieve_vehicles (self):
+        """
+        Retrieve  vehicles
+        """
+        self.register_vehicle()
+        response = self.client.get(
+                self.retrieve_vehicles_url, format='json',
+                HTTP_AUTHORIZATION='token {}'.format(self.token))
+
+        return response

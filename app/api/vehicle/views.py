@@ -1,13 +1,18 @@
 from rest_framework import status
 from rest_framework import generics,mixins
 from rest_framework.response import Response
+from rest_framework import viewsets
 from ..helpers.renderers import RequestJSONRenderer
+from ..helpers.pagination_helper import Pagination
+from rest_framework.filters import SearchFilter
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (VehicleRegistrationSerializer,
                           VehicleUpdateSerializer,
                           VehicleRetrieveSerializer)
 from ..helpers.constants import VEHICLE_REGISTRATION_SUCCESS_MESSAGE
 from .validators.validate_vehicle import validate_vehicle_id
+from .models import Vehicle
 
 
 class RegisterVehicleApiView(generics.CreateAPIView):
@@ -60,3 +65,17 @@ class VehicleRetrieveUpdateApiView(mixins.RetrieveModelMixin, generics.GenericAP
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class VehiclesRetrieveApiView(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = (RequestJSONRenderer,)
+    serializer_class = VehicleRetrieveSerializer
+    queryset = Vehicle.objects.filter(deleted=False)
+    pagination_class = Pagination
+    filter_backends = (SearchFilter,)
+    search_fields = ('fare','capacity')
+
+    @action(methods=['GET'], detail=False, url_name='Search vehicle')
+    def search(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

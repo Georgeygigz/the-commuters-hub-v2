@@ -25,7 +25,18 @@ class VehicleRetrieveTest(TestBaseCase):
         Test vehicle retrieve vehicle without token
         """
         response = self.retrieve_vehicle_without_token()
-        # import pdb;pdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertIn(
             b'Authentication credentials were not provided', response.content)
+
+    def test_retrieve_vehicles_successfully(self):
+        """
+        Test retrieve vehicles successfully
+        """
+        response = self.retrieve_vehicles()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, dict)
+        self.assertEqual(response.data['paginationMeta']['currentPage'], 1)
+        self.assertIsInstance(response.data['paginationMeta'], dict)
+        self.assertIsInstance(response.data['rows'], list)
+
