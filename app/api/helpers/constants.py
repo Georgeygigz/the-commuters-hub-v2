@@ -4,3 +4,4 @@ PASS_RESET_MESSAGE = "Please check your email for a link to reset your password.
 REQUEST_SUCCESS_MESSAGE = "The route has been created successfully"
 JOINED_ROUTE_SUCCESS_MESSAGE = "You have joined the route successfully"
 VEHICLE_REGISTRATION_SUCCESS_MESSAGE = "The vehicle has been registered successfully"
+FETCH_SUCCESS_MESSAGE = "{} fetched successfully"
