@@ -55,3 +55,26 @@ jobs:
             pipenv run coverage run --source=app manage.py test --verbosity=2
             pipenv run coverage report -m
             pipenv run codecov
+
+      - add_ssh_keys:
+          fingerprints:
+            - "${commuters}"
+
+      - deploy:
+          name: deployment
+          command: |
+            if [[ "${CIRCLE_BRANCH}" == "develop" ]]; then
+              ssh -o "StrictHostKeyChecking no" ${DROPLET_USER}@${IP_ADDRESS} bash --login -i" \
+              cd ~
+              rm -rf the-commuters-hub-v2
+              git clone https://github.com/Georgeygigz/the-commuters-hub-v2
+              cd the-commuters-hub-v2
+              git checkout ${CIRCLE_BRANCH}
+              export user_password=${SUDO_PASSWORD}
+              export sec_key=${SECRET_KEY}
+              export db_name=${DB_NAME}
+              export db_password=${SUDO_PASSWORD}
+              export db_host=${DB_HOST}
+              export db_user=${DROPLET_USER}
+              sh post_deployment.sh"
+            fi
