@@ -54,7 +54,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     username = serializers.RegexField(
         regex='^(?!.*\ )[A-Za-z\d\-\_]+$',
         allow_null=False,
-        required=True,
+        required=False,
+        allow_blank=True,
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),
@@ -84,8 +85,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     # with underscores and hyphens allowed
     surname = serializers.RegexField(
         regex='^(?!.*\ )[A-Za-z\d\-\_]+$',
-        allow_null=False,
-        required=True,
+        allow_null=True,
+        required=False,
         error_messages={
             'required': error_dict['required'],
             'invalid': error_dict['invalid_name'].format('Surname')
@@ -93,8 +94,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
 
     id_number = serializers.IntegerField(
-        allow_null=False,
-        required=True,
+        allow_null=True,
+        required=False,
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),

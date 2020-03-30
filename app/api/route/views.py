@@ -14,6 +14,8 @@ from ..helpers.route_members import add_route_member
 from .models import Route
 from ..helpers.pagination_helper import Pagination
 from .validators.validate_route import validate_route_id
+from .helpers.location_coordinates import get_location_coordinates
+
 
 # Create your views here.
 class ScheduleRouteApiView(generics.CreateAPIView):
@@ -27,6 +29,8 @@ class ScheduleRouteApiView(generics.CreateAPIView):
         """
 
         request_data = request.data
+        request_data['starting_point'] = get_location_coordinates(request_data['starting_point'])
+        request_data['destination'] = get_location_coordinates(request_data['destination'])
         serializer = self.serializer_class(data=request_data)
 
         serializer.validate_created_by(request.user.id)
