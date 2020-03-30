@@ -63,7 +63,7 @@ jobs:
       - deploy:
           name: deployment
           command: |
-            if [[ "${CIRCLE_BRANCH}" == "develop" ]]; then
+            if [[ "${CIRCLE_BRANCH}" == "develop-covid" ]]; then
               ssh -o "StrictHostKeyChecking no" ${DROPLET_USER}@${IP_ADDRESS} bash --login -i" \
               cd ~
               rm -rf the-commuters-hub-v2

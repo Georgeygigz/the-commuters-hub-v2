@@ -1,4 +1,6 @@
 from rest_framework.test import APITestCase
+import json
+from unittest.mock import patch,Mock
 from rest_framework.reverse import reverse as api_reverse
 from ...authentication.models import User
 from ..models import Route
@@ -115,30 +117,59 @@ class TestBaseCase(APITestCase):
         self.schedule_route_successfully_two()
         return Route.objects.get(created_by=User.objects.get(email=self.user_three.email).id)
 
-    def schedule_route_successfully(self):
+    @patch("requests.get")
+    def schedule_route_successfully(self, mock_obj):
         """
         Schedule route successfully
         """
+        location_data ={
+            "results": [{"geometry":{
+            "location": {"lat": -1.2920659, "lng": 36.8219462}},
+            "formatted_address":'Nairobi, Kenya'}]}
+        return_mock = Mock()
+        return_mock.status_code = 200
+        return_mock.content = json.dumps(location_data).encode()
+        mock_obj.return_value = return_mock
+
         response = self.client.post(
             self.schedule_route_url, self.valid_route_details, format='json',
             HTTP_AUTHORIZATION='token {}'.format(self.token))
 
         return response
 
-    def schedule_route_successfully_two(self):
+    @patch("requests.get")
+    def schedule_route_successfully_two(self,mock_obj):
         """
         Schedule route successfully
         """
+        location_data ={
+            "results": [{"geometry":{
+            "location": {"lat": -1.2920659, "lng": 36.8219462}},
+            "formatted_address":'Nairobi, Kenya'}]}
+        return_mock = Mock()
+        return_mock.status_code = 200
+        return_mock.content = json.dumps(location_data).encode()
+        mock_obj.return_value = return_mock
+
         response = self.client.post(
             self.schedule_route_url, self.valid_route_two_details, format='json',
             HTTP_AUTHORIZATION='token {}'.format(self.token_three))
 
         return response
 
-    def schedule_second_route_fails(self):
+    @patch("requests.get")
+    def schedule_second_route_fails(self,mock_obj):
         """
         Schedule second route fails
         """
+        location_data ={
+            "results": [{"geometry":{
+            "location": {"lat": -1.2920659, "lng": 36.8219462}},
+            "formatted_address":'Nairobi, Kenya'}]}
+        return_mock = Mock()
+        return_mock.status_code = 200
+        return_mock.content = json.dumps(location_data).encode()
+        mock_obj.return_value = return_mock
         self.schedule_route_successfully()
         response = self.client.post(
             self.schedule_route_url, self.valid_route_details, format='json',
@@ -146,19 +177,37 @@ class TestBaseCase(APITestCase):
 
         return response
 
-    def schedule_route_without_token_fails(self):
+    @patch("requests.get")
+    def schedule_route_without_token_fails(self, mock_obj):
         """
         Schedule route without token fails
         """
+        location_data ={
+            "results": [{"geometry":{
+            "location": {"lat": -1.2920659, "lng": 36.8219462}},
+            "formatted_address":'Nairobi, Kenya'}]}
+        return_mock = Mock()
+        return_mock.status_code = 200
+        return_mock.content = json.dumps(location_data).encode()
+        mock_obj.return_value = return_mock
         response = self.client.post(
             self.schedule_route_url, self.valid_route_details, format='json')
 
         return response
 
-    def schedule_existing_route_fails(self):
+    @patch("requests.get")
+    def schedule_existing_route_fails(self, mock_obj):
         """
         Schedule an existing route fails
         """
+        location_data ={
+            "results": [{"geometry":{
+            "location": {"lat": -1.2920659, "lng": 36.8219462}},
+            "formatted_address":'Nairobi, Kenya'}]}
+        return_mock = Mock()
+        return_mock.status_code = 200
+        return_mock.content = json.dumps(location_data).encode()
+        mock_obj.return_value = return_mock
         self.schedule_route_successfully()
         response = self.client.post(
             self.schedule_route_url, self.valid_route_details, format='json',

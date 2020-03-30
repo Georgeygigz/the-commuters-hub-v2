@@ -78,4 +78,5 @@ class VehiclesRetrieveApiView(viewsets.ReadOnlyModelViewSet):
 
     @action(methods=['GET'], detail=False, url_name='Search vehicle')
     def search(self, request, *args, **kwargs):
+        queryset =  Vehicle.objects.filter(owner=request.user.id)
         return super().list(request, *args, **kwargs)

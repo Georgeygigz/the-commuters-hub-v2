@@ -174,7 +174,13 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', '')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_POOL_LIMIT = 1
+CELERY_BROKER_CONNECTION_TIMEOUT = 10
 
 # pagination
 PAGE_SIZE = int(os.getenv('PAGE_SIZE', 10))
 MAX_PAGE_SIZE = int(os.getenv('MAX_PAGE_SIZE', 200))
+
+#location coordinates
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY",'')
+GCP_URL = os.getenv('GCP_URL','')

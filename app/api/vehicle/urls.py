@@ -21,6 +21,6 @@ urlpatterns = [
     path('retrieve', VehiclesRetrieveApiView.as_view(
         {'get': 'search'}), name='vehicle-retrieve'),
     path('register', RegisterVehicleApiView.as_view(), name='register-vehicle'),
-    path('<str:vehicle_id>', VehicleRetrieveUpdateApiView.as_view(), name='update-fare')
+    path('<str:vehicle_id>', VehicleRetrieveUpdateApiView.as_view(), name='update-fare'),
 
 ]

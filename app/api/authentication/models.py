@@ -60,14 +60,17 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     last_name = models.CharField(db_index=True, max_length=255, unique=False)
 
-    surname = models.CharField(db_index=True, max_length=255, unique=False)
+    surname = models.CharField(db_index=True, max_length=255, unique=False,
+                blank=True, null=True)
 
     username = models.CharField(
-        db_index=True, max_length=255, unique=True, default="default-username")
+        db_index=True, max_length=255, unique=True, default="default-username",
+        blank=True, null=True)
 
     email = models.EmailField(db_index=True, unique=True)
 
-    id_number = models.IntegerField(db_index=True, unique=True)
+    id_number = models.IntegerField(db_index=True, unique=True,
+                    blank=True, null=True)
 
     phone_number = models.CharField(db_index=True, max_length=15, unique=True)
 
