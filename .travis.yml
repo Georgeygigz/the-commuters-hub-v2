@@ -54,7 +54,7 @@ after_success:
 
 deploy:
     on:
-      branch: master
+      branch: develop
     skip_cleanup: true
     provider: elasticbeanstalk
     region: "us-east-2"
