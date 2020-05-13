@@ -1,0 +1,81 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+      - image: mdillon/postgis
+        env:
+          - POSTGRES_USER: root
+          - PGUSER: postgres
+          - POSTGRES_DB: commuters_hub
+          - POSTGRES_PASSWORD: ""
+
+      - image: circleci/redis:5.0.6
+      # used to specify where a job's steps run
+    working_directory: ~/repo
+
+    # to run specific commands
+    steps:
+      # checkout is used to check out source code
+      - checkout
+      - run:
+          name: grant permission to /usr/local/bin
+          command: |
+            sudo chown -R circleci:circleci /usr/local/bin
+      - run:
+          name: grant permission to /usr/local/lib/python3.6/site-packages
+          command: |
+            sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+
+      - restore_cache: # ensure this step occurs *before* installing dependencies
+          key: deps10-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install pipenv
+            pipenv install
+
+            # installing GDAL
+            sudo apt update && sudo apt install -y \
+            gdal-bin python-gdal python3-gdal
+
+      - save_cache:
+          key: deps10-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.6/site-packages"
+
+      - run:
+          name: run tests
+          command: |
+            pipenv run coverage run --source=app manage.py test --verbosity=2
+            pipenv run coverage report -m
+            pipenv run codecov
+
+      - add_ssh_keys:
+          fingerprints:
+            - "${commuters}"
+
+      - deploy:
+          name: deployment
+          command: |
+            if [[ "${CIRCLE_BRANCH}" == "dev" ]]; then
+              ssh -o "StrictHostKeyChecking no" ${DROPLET_USER}@${IP_ADDRESS} bash --login -i" \
+              cd ~
+              rm -rf the-commuters-hub-v2
+              git clone https://github.com/Georgeygigz/the-commuters-hub-v2
+              cd the-commuters-hub-v2
+              git checkout ${CIRCLE_BRANCH}
+              export user_password=${SUDO_PASSWORD}
+              export sec_key=${SECRET_KEY}
+              export db_name=${DB_NAME}
+              export db_password=${SUDO_PASSWORD}
+              export db_host=${DB_HOST}
+              export db_user=${DROPLET_USER}
+              cp ../.env .env
+              sh post_deployment.sh"
+            fi
