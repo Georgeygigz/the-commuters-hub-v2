@@ -26,5 +26,5 @@ RUN pip install -r requirements.txt
 # USER root
 
 COPY . .
-
+EXPOSE 80
 CMD ["/bin/bash", "-c", "docker/start_api.sh"]
