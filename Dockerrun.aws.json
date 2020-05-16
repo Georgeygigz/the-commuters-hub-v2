@@ -5,7 +5,8 @@
             "name": "commuters",
             "image": "241619/commuters",
             "hostname": "commuters",
-            "essential": false
+            "essential": false,
+            "memory": 128
         },
         {
             "name": "nginx-custom",
@@ -18,7 +19,8 @@
                     "containerPort": 80
                 }
             ],
-            "links": ["commuters"]
+            "links": ["commuters"],
+            "memory": 128
         }
     ]
 }
