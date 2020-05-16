@@ -59,7 +59,7 @@ deploy:
     provider: elasticbeanstalk
     region: "us-east-2"
     app: "commuters"
-    env: "Commuters-env-1"
+    env: "Commuters-env"
     bucket_name: "elasticbeanstalk-us-east-2-207722787647"
     bucket_path: "commuters"
     only_create_app_version: false

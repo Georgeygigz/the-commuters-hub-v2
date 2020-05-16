@@ -37,7 +37,7 @@ services:
       - "8000:8000"
     image: commuters-image
     volumes:
-      - .:/commuters
+      - .:/usr/commuters
     depends_on:
       - redis
       - database
