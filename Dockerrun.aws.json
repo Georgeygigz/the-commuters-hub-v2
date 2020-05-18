@@ -6,12 +6,7 @@
             "image": "241619/commuters",
             "hostname": "commuters",
             "essential": false,
-            "memory": 128,
-            "command": [
-                "tail",
-                "-f",
-                "/bin/bash"
-            ]
+            "memory": 1024
         },
         {
             "name": "nginx-custom",
@@ -25,12 +20,7 @@
                 }
             ],
             "links": ["commuters"],
-            "memory": 128,
-            "command": [
-                "tail",
-                "-f",
-                "/bin/bash"
-            ]
+            "memory": 1024
         }
     ]
 }
