@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: server-deployment
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            component: api
+    template:
+        metadata:
+            labels:
+                component: api
+        spec:
+            containers:
+                - name: server
+                  image: 241619/commuters:1.1.2
+                  ports:
+                    - containerPort: 8000
+                  env:
+                    - name: CELERY_BROKER_URL
+                      value: redis://redis-cluster-ip-service
+                    - name: CELERY_RESULT_BACKEND
+                      value: redis://redis-cluster-ip-service
+                    - name: DB_NAME
+                      value: postgres
+                    - name: DB_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: dbpass
+                            key: DB_PASSWORD
+                    - name: DB_USER
+                      value: postgres
+                    - name: DB_HOST
+                      value: postgres-cluster-ip-service
+                    - name: DB_PORT
+                      value: '5432'
+                    # - name: DJANGO_SETTINGS_MODULE
+                    #   value: "app.settings.production"
+                    # - name: SECRET_KEY
+                    #   value: jwehfp9w3409hfoscnft943phrgjklldv
+                    # - name: ALLOWED_LOCAL_HOST
+                    #   value: '172.17.0.2'

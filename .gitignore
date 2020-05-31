@@ -8,7 +8,7 @@ __pycache__/
 .vscode/
 
 static
-
+*.json
 # Distribution / packaging
 .Python
 build/

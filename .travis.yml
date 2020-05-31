@@ -1,68 +1,10 @@
-# sudo: required
-# services:
-#     - docker
-
-# before_install:
-#     - docker build -t 241619/commuters .
-
-language: python
-
-python:
-  - "3.6"
-
-addons:
-  postgresql: "9.6"
-  apt:
-    packages:
-    - postgresql-9.6-postgis-2.4
-
+sudo: required
 services:
-  - postgresql
-  - docker
-# before_install:
-#   - docker build -t docker-basics -f Dockerfile .
-
-install:
-  - pip install pipenv
-  - pip install coveralls
-  - pipenv install
-  - sudo apt-get --quiet update
-  - sudo apt-get install --yes libgdal-dev gdal-bin
-
-# Run tests
-before_script:
-  - psql -c "create database $POSTGRES_DB;" -U $POSTGRES_USER
-  - psql -c "ALTER USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';" -U $POSTGRES_USER
-  - psql -c "create extension postgis" -U $POSTGRES_USER
-  - psql -c "CREATE EXTENSION postgis_topology;" -U $POSTGRES_USER
-  - python manage.py migrate
-script:
-  - coverage run --source=app manage.py test
-  - python -m coverage report -m
-
-after_success:
-  - coveralls
-#   - docker build -t 241619/commuters docker/Dockerfile
-  - docker-compose build
-  - docker tag commuters-image $DOCKER_ID/commuters:1.0
-  - docker tag nginx-custom $DOCKER_ID/docker-basics-nginx-custom:1.0
-  # Login to docker CLI
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Push the image to docker hub
-  - docker push $DOCKER_ID/commuters:1.0
-  - docker push $DOCKER_ID/docker-basics-nginx-custom:1.0
-
-
-deploy:
-    on:
-      branch: develop
-    skip_cleanup: true
-    provider: elasticbeanstalk
-    region: "us-east-2"
-    app: "commuters"
-    env: "Commuters-env-1"
-    bucket_name: "elasticbeanstalk-us-east-2-207722787647"
-    bucket_path: "commuters"
-    only_create_app_version: false
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
+    - docker
+before_install:
+    - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+    - curl https://sdk.cloud.google.com | bash > /dev/null;
+    - source $HOME/google-cloud-sdk/path.bash.inc
+    - gcloud components update kubectl
+    - gcloud auth activate-service-account --key-file service-account.json
+    -

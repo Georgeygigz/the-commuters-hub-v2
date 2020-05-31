@@ -52,6 +52,7 @@ after_success:
   - docker push $DOCKER_ID/commuters:1.0
   - docker push $DOCKER_ID/docker-basics-nginx-custom:1.0
 
+
 deploy:
     on:
       branch: develop
@@ -59,7 +60,7 @@ deploy:
     provider: elasticbeanstalk
     region: "us-east-2"
     app: "commuters"
-    env: "Commuters-env"
+    env: "Commuters-env-1"
     bucket_name: "elasticbeanstalk-us-east-2-207722787647"
     bucket_path: "commuters"
     only_create_app_version: false
