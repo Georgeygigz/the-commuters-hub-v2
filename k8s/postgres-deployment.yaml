@@ -29,9 +29,15 @@ spec:
                     - name: POSTGRES_PASSWORD
                       valueFrom:
                         secretKeyRef:
-                            name: dbpass
+                            name: env-var
                             key: DB_PASSWORD
                     - name: POSTGRES_USER
-                      value: postgres
+                      valueFrom:
+                        secretKeyRef:
+                            name: env-var
+                            key: DB_USER
                     - name: POSTGRES_DB
-                      value: postgres
+                      valueFrom:
+                        secretKeyRef:
+                            name: env-var
+                            key: DB_NAME
