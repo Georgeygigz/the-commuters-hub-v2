@@ -13,6 +13,3 @@ spec:
                   backend:
                     serviceName: client-cluster-ip-service
                     servicePort: 8000
-                # - path: /docs/
-                #   backend:
-                #     serviceName: s
