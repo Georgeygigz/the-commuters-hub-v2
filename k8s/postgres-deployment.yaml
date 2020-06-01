@@ -32,7 +32,7 @@ spec:
                             name: env-var
                             key: DB_PASSWORD
                     - name: POSTGRES_USER
-                    - value: postgres
+                      value: postgres
                       # valueFrom:
                       #   secretKeyRef:
                       #       name: env-var
