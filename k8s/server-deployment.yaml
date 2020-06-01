@@ -33,10 +33,11 @@ spec:
                             name: env-var
                             key: DB_PASSWORD
                     - name: DB_USER
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: DB_USER
+                    - value: postgres
+                      # valueFrom:
+                      #   secretKeyRef:
+                      #       name: env-var
+                      #       key: DB_USER
                     - name: DB_HOST
                       value: postgres-cluster-ip-service
                     - name: DB_PORT
