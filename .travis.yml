@@ -11,6 +11,7 @@ addons:
     - postgresql-9.6-postgis-2.4
 
 services:
+    - postgresql
     - docker
 env:
     global:
