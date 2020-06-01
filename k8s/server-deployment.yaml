@@ -38,6 +38,6 @@ spec:
                     - name: DJANGO_SETTINGS_MODULE
                       value: "app.settings.production"
                     - name: SECRET_KEY
-                      value: jwehfp9w3409hfoscnft943phrgjklldv
+                      value: "jwehfp9w3409hfoscnft943phrgjklldv"
                     - name: ALLOWED_LOCAL_HOST
                       value: '172.17.0.2'
