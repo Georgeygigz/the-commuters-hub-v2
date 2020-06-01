@@ -35,9 +35,12 @@ spec:
                       value: postgres-cluster-ip-service
                     - name: DB_PORT
                       value: '5432'
-                    - name: DJANGO_SETTINGS_MODULE
-                      value: "app.settings.production"
+                    # - name: DJANGO_SETTINGS_MODULE
+                    #   value: "app.settings.production"
                     - name: SECRET_KEY
-                      value: "jwehfp9w3409hfoscnft943phrgjklldv"
+                      valueFrom:
+                      secretKeyRef:
+                        name: env-vars
+                        key: SECRET_KEY
                     - name: ALLOWED_LOCAL_HOST
                       value: '172.17.0.2'
