@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: server
-                  image: 241619/commuters:1.1.2
+                  image: 241619/commuters
                   ports:
                     - containerPort: 8000
                   env:
