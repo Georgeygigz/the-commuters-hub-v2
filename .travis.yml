@@ -40,7 +40,7 @@ before_install:
     - psql -c "ALTER USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';" -U $POSTGRES_USER
     - psql -c "create extension postgis" -U $POSTGRES_USER
     - psql -c "CREATE EXTENSION postgis_topology;" -U $POSTGRES_USER
-    - python manage.py migrate
+    # - python manage.py migrate
 script:
     - coverage run --source=app manage.py test
     - python -m coverage report -m
