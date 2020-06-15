@@ -1,7 +1,7 @@
 import os
 from .base import *
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 VERIFY_URL = os.getenv('VERIFY_URL_DEV', '')
