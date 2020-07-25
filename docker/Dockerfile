@@ -1,11 +1,21 @@
 FROM python:3.7-slim as build
 
 # Create a group and user to run our app
-ARG APP_USER=appuser
-RUN groupadd -r ${APP_USER} && useradd --no-log-init -r -g ${APP_USER} ${APP_USER}
+# ARG APP_USER=appuser
+# RUN groupadd -r ${APP_USER} && useradd --no-log-init -r -g ${APP_USER} ${APP_USER}
 
 # Working directory where all the setup would take place in the image
-WORKDIR usr/commuters
+WORKDIR /commuters
+
+# The default user that should be used
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+ARG APP_USER=appuser
+
+# Create user and group
+RUN groupadd -g ${GROUP_ID} ${APP_USER} && useradd -u ${USER_ID} -g ${APP_USER} -s /bin/sh ${APP_USER}
+
 
 RUN pip3 install --upgrade pip
 RUN apt-get -y update
@@ -23,8 +33,15 @@ COPY requirements.txt .
 # RUN pip install
 RUN pip install -r requirements.txt
 
-# USER root
 
 COPY . .
+
+RUN chown -R ${APP_USER}:${APP_USER} /commuters
+RUN chmod 755 /commuters
+
+USER ${APP_USER}
+
+RUN mkdir -p app/static
+
 EXPOSE 80
 CMD ["/bin/bash", "-c", "docker/start_api.sh"]

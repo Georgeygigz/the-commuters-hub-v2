@@ -1,0 +1,164 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: api
+
+  # clarifications
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+
+      # clarifications
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      volumes:
+        - name: db-connection
+          secret:
+            secretName: service-acc
+
+      containers:
+        - name: server
+          image: gcr.io/fluid-firefly-278811/route-money-api-image
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: 380m
+            requests:
+              memory: "350Mi"
+              cpu: 300m
+          env:
+            - name: CELERY_BROKER_URL
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: CELERY_BROKER_URL
+            - name: CELERY_RESULT_BACKEND
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: CELERY_RESULT_BACKEND
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: DB_NAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: DB_PASSWORD
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: DB_USER
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_PORT
+              value: '5432'
+            - name: DJANGO_SETTINGS_MODULE
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: DJANGO_SETTINGS_MODULE
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: SECRET_KEY
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: EMAIL_HOST
+            - name: EMAIL_HOST_USER
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: EMAIL_HOST_USER
+            - name: EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: EMAIL_PORT
+            - name: EMAIL_SENDER
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: EMAIL_SENDER
+            - name: RESET_TOKEN_EXP_TIME
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: RESET_TOKEN_EXP_TIME
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: SENDGRID_API_KEY
+            - name: TOKEN_EXP_TIME
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: TOKEN_EXP_TIME
+            - name: VERIFY_URL
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: VERIFY_URL
+            - name: VERIFY_URL_PROD
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: VERIFY_URL_PROD
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: SENDGRID_API_KEY
+
+        - name: cloud-sql-proxy
+          # It is recommended to use the latest version of the Cloud SQL proxy
+          # Make sure to update on a regular schedule!
+          image: gcr.io/cloudsql-docker/gce-proxy:1.17
+          command:
+            - "/cloud_sql_proxy"
+
+            # If connecting from a VPC-native GKE cluster, you can use the
+            # following flag to have the proxy connect over private IP
+            # - "-ip_address_types=PRIVATE"
+            # Replace DB_PORT with the port the proxy should listen on
+            # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
+            - "-instances=commuters-284407:us-central1:commuters=tcp:5432"
+
+            # This flag specifies where rge service account key can be dound
+            - "-credential_file=/secrets/service_account.json"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65534
+          volumeMounts:
+            - name: db-connection
+              mountPath: /secrets/
+              readOnly: true
