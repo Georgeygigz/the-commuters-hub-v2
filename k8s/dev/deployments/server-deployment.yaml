@@ -1,104 +1,103 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: server-deployment
+  name: server-deployment
 spec:
-    replicas: 3
-    selector:
-        matchLabels:
-            component: api
-    template:
-        metadata:
-            labels:
-                component: api
-        spec:
-            containers:
-                - name: server
-                  image: 241619/commuters
-                  ports:
-                    - containerPort: 8000
-                  env:
-                    - name: CELERY_BROKER_URL
-                      value: redis://redis-cluster-ip-service
-                    - name: CELERY_RESULT_BACKEND
-                      value: redis://redis-cluster-ip-service
-                    - name: DB_NAME
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: DB_NAME
-                    - name: DB_PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: DB_PASSWORD
-                    - name: DB_USER
-                      value: postgres
-                      # valueFrom:
-                      #   secretKeyRef:
-                      #       name: env-var
-                      #       key: DB_USER
-                    - name: DB_HOST
-                      value: postgres-cluster-ip-service
-                    - name: DB_PORT
-                      value: '5432'
-                    - name: DJANGO_SETTINGS_MODULE
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: DJANGO_SETTINGS_MODULE
-                    - name: SECRET_KEY
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: SECRET_KEY
-                    - name: EMAIL_HOST
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: EMAIL_HOST
-                    - name: EMAIL_HOST_USER
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: EMAIL_HOST_USER
-                    - name: EMAIL_PORT
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: EMAIL_PORT
-                    - name: EMAIL_SENDER
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: EMAIL_SENDER
-                    - name: RESET_TOKEN_EXP_TIME
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: RESET_TOKEN_EXP_TIME
-                    - name: SENDGRID_API_KEY
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: SENDGRID_API_KEY
-                    - name: TOKEN_EXP_TIME
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: TOKEN_EXP_TIME
-                    - name: VERIFY_URL
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: VERIFY_URL
-                    - name: VERIFY_URL_PROD
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: VERIFY_URL_PROD
-                    - name: EMAIL_HOST_PASSWORD
-                      valueFrom:
-                        secretKeyRef:
-                            name: env-var
-                            key: SENDGRID_API_KEY
+  replicas: 3
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+      containers:
+        - name: server
+          image: 241619/commuters
+          ports:
+            - containerPort: 8000
+          env:
+            - name: CELERY_BROKER_URL
+              value: redis://redis-cluster-ip-service
+            - name: CELERY_RESULT_BACKEND
+              value: redis://redis-cluster-ip-service
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: DB_NAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: DB_PASSWORD
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                    name: env-var
+                    key: DB_USER
+            - name: DB_HOST
+              value: postgres-cluster-ip-service
+            - name: DB_PORT
+              value: "5432"
+            - name: DJANGO_SETTINGS_MODULE
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: DJANGO_SETTINGS_MODULE
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: SECRET_KEY
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: EMAIL_HOST
+            - name: EMAIL_HOST_USER
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: EMAIL_HOST_USER
+            - name: EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: EMAIL_PORT
+            - name: EMAIL_SENDER
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: EMAIL_SENDER
+            - name: RESET_TOKEN_EXP_TIME
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: RESET_TOKEN_EXP_TIME
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: SENDGRID_API_KEY
+            - name: TOKEN_EXP_TIME
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: TOKEN_EXP_TIME
+            - name: VERIFY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: VERIFY_URL
+            - name: VERIFY_URL_PROD
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: VERIFY_URL_PROD
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-var
+                  key: SENDGRID_API_KEY

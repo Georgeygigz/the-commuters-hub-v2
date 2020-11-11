@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /root/.local/share/virtualenvs/app-*/bin/activate
+# source /root/.local/share/virtualenvs/app-*/bin/activate
 export $(grep -v '^#' .env | xargs)
 
 

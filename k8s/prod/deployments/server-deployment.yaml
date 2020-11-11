@@ -150,9 +150,9 @@ spec:
             # - "-ip_address_types=PRIVATE"
             # Replace DB_PORT with the port the proxy should listen on
             # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
-            - "-instances=commuters-284407:us-central1:commuters=tcp:5432"
+            - "-instances=commuters-278811:us-central1:commuters=tcp:5432"
 
-            # This flag specifies where rge service account key can be dound
+            # This flag specifies where rge service account key can be found
             - "-credential_file=/secrets/service_account.json"
           securityContext:
             runAsNonRoot: true
