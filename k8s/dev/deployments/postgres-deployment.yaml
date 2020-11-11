@@ -15,10 +15,10 @@ spec:
             volumes:
                 - name: postgres-storage
                   persistentVolumeClaim:
-                    claimName: database-pvc
+                    claimName: database-persistent-volume-claim
             containers:
                 - name: database
-                  image: mdillon/postgis:10
+                  image: mdillon/postgis:latest
                   ports:
                     - containerPort: 5432
                   volumeMounts:

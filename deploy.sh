@@ -8,8 +8,8 @@ docker push 241619/commuters:$SHA
 # kubectl apply -f k8s/pvcs
 # kubectl apply -f k8s/services
 
-kubectl apply -f k8s/prod/deployments
-kubectl apply -f k8s/prod/ingress
-kubectl apply -f k8s/prod/services
+# kubectl apply -f k8s/prod/deployments
+# kubectl apply -f k8s/prod/ingress
+# kubectl apply -f k8s/prod/services
 
 kubectl set image deployments/server-deployment server=241619/commuters:$SHA
