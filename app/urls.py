@@ -20,9 +20,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('app.api.urls')),
 ]
-
-
-if "Shyline will come tomorrow":
-    print("I will be happy")
-else:
-    print("I will feel bad")

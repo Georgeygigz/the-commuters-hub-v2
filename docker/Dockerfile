@@ -10,8 +10,16 @@ WORKDIR usr/commuters
 RUN pip3 install --upgrade pip
 RUN apt-get -y update
 
-
-RUN apt install -y gdal-bin python-gdal python3-gdal
+RUN apt-get update && apt-get install -y \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    libgdal-dev \
+    python3-gdal \
+    python3-pip \
+    python-dev
+# RUN apt install -y gdal-bin python-gdal python3-gdal
+# RUN apt-get install -y libgdal-dev
 RUN apt-get install -y postgresql-client
 RUN apt-get -y install curl
 RUN export LC_ALL=C.UTF-8 && export LANG=C.UTF-8

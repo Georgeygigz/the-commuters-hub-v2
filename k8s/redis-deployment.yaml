@@ -17,3 +17,19 @@ spec:
                   image: redis
                   ports:
                     - containerPort: 6379
+                  resources:
+                    limits:
+                        memory: "256Mi"
+                        cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: redis-cluster-ip-service
+spec:
+    type: ClusterIP
+    selector:
+        component: redis
+    ports:
+        - port: 6379
+          targetPort: 6379
